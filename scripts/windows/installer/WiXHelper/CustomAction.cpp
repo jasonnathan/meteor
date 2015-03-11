@@ -372,10 +372,13 @@ HRESULT Download_Package(
 		MyCallback pCallback;
 		pCallback.iHInstall = hInstall;
 		hr = URLDownloadToFile(NULL, szDwnUrl, szZipFile, 0, &pCallback);
-
-		if (FAILED(hr))
-			WcaLog(LOGMSG_STANDARD, "Failed to download %S package from url: %S", wzFriendlyName, szDwnUrl);			
-		else
+                if (FAILED(hr)) {
+                        WcaLog(LOGMSG_STANDARD, "Failed to download %S package from url: %S", wzFriendlyName, szDwnUrl);
+                        wchar_t ttt[BUF_LEN] = L"";
+                        StringCchPrintf(ttt, BUF_LEN, L"the error code is %d", GetLastError());
+                        ::MessageBox(NULL, ttt, NULL, NULL);
+                }
+                else
 			WcaLog(LOGMSG_STANDARD, "%S package should be here: %S", wzFriendlyName, szZipFile);
 	}
 
