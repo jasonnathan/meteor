@@ -435,3 +435,21 @@ Tinytest.add('tracker - throwFirstError', function (test) {
     Tracker.flush({_throwFirstError: true});
   }, /foo/);
 });
+
+Tinytest.addAsync('tracker - no infinite recomputation', function (test, onComplete) {
+  var reran = false;
+  var c = Tracker.autorun(function (c) {
+    if (! c.firstRun)
+      reran = true;
+    c.invalidate();
+  });
+  test.isFalse(reran);
+  setTimeout(function () {
+    c.stop();
+    Tracker.afterFlush(function () {
+      test.isTrue(reran);
+      test.isTrue(c.stopped);
+      onComplete();
+    });
+  }, 100);
+});
